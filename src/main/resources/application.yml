@@ -1,0 +1,27 @@
+spring:
+  flyway:
+    url: jdbc:postgresql://localhost:5432/chaser_db
+    user: postgres
+    password: postgre
+    locations: classpath:db/migration
+  datasource:
+    username: postgres
+    password: postgre
+    url: jdbc:postgresql://localhost:5432/chaser_db
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  mail:
+    host: smtp.gmail.com
+    username: chaser.manager@gmail.com
+    password: qnsdbqqpwylmprmy
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+server:
+  port: 8005
+
