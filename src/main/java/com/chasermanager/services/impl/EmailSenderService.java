@@ -11,7 +11,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class EmailSenderService {
@@ -34,14 +33,13 @@ public class EmailSenderService {
     }
 
     public String createMessage(List<Item> items) {
-        Document text = Jsoup.parse(generateHtml());
-        items.forEach(item -> Objects.requireNonNull(text.select("div").first()).append(generateContent(item)));
-//        for (Item item : items) {
-//            Element data = text.select("div").first();
-//            assert data != null;
-//            data.append(generateContent(item));
-//        }
-        return String.valueOf(text);
+        Document doc = Jsoup.parse(generateHtml());
+        for (Item item : items) {
+            Element data = doc.select("div").first();
+            assert data != null;
+            data.append(generateContent(item));
+        }
+        return !doc.text().isEmpty() ? doc.toString() : null;
     }
 
     private String generateHtml() {
@@ -50,7 +48,6 @@ public class EmailSenderService {
                 <html lang="en">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Title</title>
                 </head>
                 <body>
                 <div>
