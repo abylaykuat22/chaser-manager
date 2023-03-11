@@ -1,6 +1,7 @@
 package com.chasermanager.services.impl;
 
 import com.chasermanager.domain.dto.SwitcherCreate;
+import com.chasermanager.domain.dto.SwitcherView;
 import com.chasermanager.domain.enums.Periodicity;
 import com.chasermanager.domain.enums.SwitcherStatus;
 import com.chasermanager.domain.models.Switcher;
@@ -8,6 +9,7 @@ import com.chasermanager.domain.models.Url;
 import com.chasermanager.domain.models.User;
 import com.chasermanager.exceptions.AlreadyExistsException;
 import com.chasermanager.exceptions.NotFoundException;
+import com.chasermanager.mapper.SwitcherMapper;
 import com.chasermanager.repositories.SwitcherRepository;
 import com.chasermanager.repositories.UserRepository;
 import com.chasermanager.services.PreparationService;
@@ -39,22 +41,27 @@ public class SwitcherServiceImpl implements SwitcherService {
         Switcher switcher = new Switcher();
         switcher.setUser(user);
         switcher.setUrl(url);
-        switcher.setPeriodicity(Periodicity.calculate(switcherCreate.getPeriodicity()));
+        switcher.setPeriodicity(Periodicity.mapToNumbers(switcherCreate.getPeriodicity()));
         switcher.setStatus(SwitcherStatus.STOP);
         return switcherRepository.save(switcher);
     }
 
     @Override
-    public Switcher findById(Long id) {
-        return switcherRepository.findById(id).orElseThrow(() -> new NotFoundException("Chaser by id №"+id+" not found"));
+    public SwitcherView findById(Long id) {
+        Switcher switcher = findByIdOrThrowException(id);
+        return SwitcherMapper.INSTANCE.toView(switcher);
     }
 
     @Override
     public void update(Long id, SwitcherStatus status, Periodicity periodicity) {
-        Switcher switcher = findById(id);
+        Switcher switcher = findByIdOrThrowException(id);
         if (status != null) switcher.setStatus(status);
-        if (periodicity != null) switcher.setPeriodicity(Periodicity.calculate(periodicity));
+        if (periodicity != null) switcher.setPeriodicity(Periodicity.mapToNumbers(periodicity));
         switcherRepository.save(switcher);
+    }
+
+    private Switcher findByIdOrThrowException(Long id) {
+        return switcherRepository.findById(id).orElseThrow(() -> new NotFoundException("Chaser by id №" + id + " not found"));
     }
 
     @Override
@@ -75,8 +82,9 @@ public class SwitcherServiceImpl implements SwitcherService {
     }
 
     @Override
-    public Page<Switcher> findAllByCurrentUser(Pageable pageable) {
+    public Page<SwitcherView> findAllByCurrentUser(Pageable pageable) {
         User user = userRepository.findByEmail("abylaykuat@gmail.com");
-        return switcherRepository.findAllByUser(user, pageable);
+        return switcherRepository.findAllByUser(user, pageable)
+                .map(SwitcherMapper.INSTANCE::toView);
     }
 }

@@ -1,6 +1,7 @@
 package com.chasermanager.services;
 
 import com.chasermanager.domain.dto.SwitcherCreate;
+import com.chasermanager.domain.dto.SwitcherView;
 import com.chasermanager.domain.enums.Periodicity;
 import com.chasermanager.domain.enums.SwitcherStatus;
 import com.chasermanager.domain.models.Switcher;
@@ -17,7 +18,7 @@ public interface SwitcherService {
 
     Switcher create(SwitcherCreate switcherCreate) throws NotFoundException, AlreadyExistsException;
 
-    Switcher findById(Long id);
+    SwitcherView findById(Long id);
 
     void update(Long id, SwitcherStatus status, Periodicity periodicity);
 
@@ -27,5 +28,5 @@ public interface SwitcherService {
 
     void delete(Long id);
 
-    Page<Switcher> findAllByCurrentUser(Pageable pageable);
+    Page<SwitcherView> findAllByCurrentUser(Pageable pageable);
 }

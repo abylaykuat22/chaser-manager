@@ -1,6 +1,7 @@
 package com.chasermanager.controllers;
 
 import com.chasermanager.domain.dto.SwitcherCreate;
+import com.chasermanager.domain.dto.SwitcherView;
 import com.chasermanager.domain.enums.Periodicity;
 import com.chasermanager.domain.enums.SwitcherStatus;
 import com.chasermanager.domain.models.Switcher;
@@ -22,12 +23,12 @@ public class SwitchController {
     private final SwitcherService switcherService;
 
     @GetMapping
-    public Page<Switcher> findAll(@PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable) {
+    public Page<SwitcherView> findAll(@PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable) {
         return switcherService.findAllByCurrentUser(pageable);
     }
 
     @GetMapping(value = "/{id}")
-    public Switcher findById(@PathVariable Long id) {
+    public SwitcherView findById(@PathVariable Long id) {
         return switcherService.findById(id);
     }
 
