@@ -26,5 +26,4 @@ public class Switcher extends BaseEntity{
 
     private long periodicity;
 
-
 }

@@ -1,15 +1,14 @@
 package com.chasermanager.controllers;
 
+import com.chasermanager.domain.dto.SwitcherCreate;
 import com.chasermanager.domain.enums.Periodicity;
 import com.chasermanager.domain.enums.SwitcherStatus;
-
+import com.chasermanager.domain.models.Switcher;
+import com.chasermanager.exceptions.NotFoundException;
+import com.chasermanager.exceptions.AlreadyExistsException;
 import com.chasermanager.services.SwitcherService;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/chasers")
@@ -18,19 +17,17 @@ public class SwitchController {
     private final SwitcherService switcherService;
 
     @PostMapping
-    public void create(@RequestParam String source,
-                       @RequestParam String link,
-                       @RequestParam Periodicity periodicity) {
-        switcherService.create(source, link, periodicity);
+    public Switcher create(@RequestBody SwitcherCreate switcherCreate) throws NotFoundException, AlreadyExistsException {
+        return switcherService.create(switcherCreate);
     }
 
-    @PostMapping(value = "/{id}")
-    public void setStatus(@RequestParam SwitcherStatus status,
-                          @PathVariable Long id) throws IOException, MessagingException {
-        switcherService.setStatus(status, id);
+    @PutMapping(value = "/{id}/status")
+    public void setStatus(@PathVariable Long id,
+                          @RequestParam SwitcherStatus status) {
+        switcherService.setStatus(id, status);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/{id}/periodicity")
     public void update(@PathVariable Long id,
                        @RequestParam Periodicity periodicity) {
         switcherService.update(id, periodicity);

@@ -1,10 +1,9 @@
 package com.chasermanager.domain.models;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.*;
 
 @Entity
 @Table(name = "items")
@@ -12,7 +11,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item extends BaseEntity{
+@Builder
+public class Item extends BaseEntity {
     private String name;
     private String price;
     private String description;

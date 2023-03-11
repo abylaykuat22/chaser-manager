@@ -3,6 +3,8 @@ package com.chasermanager.services.impl;
 import com.chasermanager.domain.models.Item;
 import com.chasermanager.domain.models.Source;
 import com.chasermanager.domain.models.Switcher;
+import com.chasermanager.domain.models.User;
+import com.chasermanager.domain.utils.ItemBuilder;
 import com.chasermanager.repositories.SourceRepository;
 import com.chasermanager.repositories.UserRepository;
 import com.chasermanager.services.ItemService;
@@ -30,37 +32,27 @@ public class PreparationServiceImpl implements PreparationService {
     @Override
     public void preparePobeda63(Switcher switcher) throws IOException, MessagingException {
         var document = Jsoup.connect(switcher.getUrl().getLink()).get();
-
         Elements elements = document.getElementsByClass("card is-lazy");
-        Elements content;
-        Elements images;
-        List<Item> items = new ArrayList<>();
-
-        for (Element element : elements) {
-            content = element.getElementsByClass("card-content");
-            images = element.getElementsByClass("card-images");
-
-            Item item = new Item();
-            item.setName(getName(content));
-            item.setDescription(getDescription(content));
-            item.setPrice(getPrice(content));
-            item.setLink(getLink(content));
-            item.setImg(getImg(images));
-            item.setUser(userRepository.getReferenceById(switcher.getId()));
-            item.setSource(sourceRepository.findByName("Победа-63"));
-
-            Item newItem = itemService.create(item, switcher.getUser().getId());
-
-            if (newItem != null)
-                items.add(item);
-        }
-
-
+        List<Item> items = prepareItems(elements, switcher);
         String text = emailSenderService.createMessage(items);
         String email = switcher.getUser().getEmail();
         String subject = Source.generateSubject("Победа-63");
 
         if (text != null) emailSenderService.send(email, text, subject);
+    }
+
+    private List<Item> prepareItems(Elements elements, Switcher switcher) {
+        List<Item> items = new ArrayList<>();
+        User user = userRepository.getReferenceById(switcher.getUser().getId());
+        Source source = sourceRepository.findByName("Победа-63");
+        for (Element element : elements) {
+            Elements content = element.getElementsByClass("card-content");
+            Elements images = element.getElementsByClass("card-images");
+            Item item = ItemBuilder.buildItem(getName(content), getPrice(content), getDescription(content), getImg(images), getLink(content), source, user);
+            Item newItem = itemService.create(item);
+            if (newItem != null) items.add(newItem);
+        }
+        return items;
     }
 
     private String getName(Elements content) {
@@ -79,7 +71,7 @@ public class PreparationServiceImpl implements PreparationService {
             data = element.getElementsByClass("card-price");
             price = data.attr("content");
             currency = Objects.requireNonNull(data.select("span").first()).text();
-            return price +" "+currency;
+            return price + " " + currency;
         }
         return null;
     }

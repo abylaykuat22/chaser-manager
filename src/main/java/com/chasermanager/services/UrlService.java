@@ -1,9 +1,9 @@
 package com.chasermanager.services;
 
-import com.chasermanager.domain.models.Source;
 import com.chasermanager.domain.models.Url;
+import com.chasermanager.exceptions.NotFoundException;
 
 public interface UrlService {
-    Url create(String link, Source source);
-    Url findByUrlAndSource(String url, String sourceName);
+    Url create(String link, String sourceName) throws NotFoundException;
+
 }
