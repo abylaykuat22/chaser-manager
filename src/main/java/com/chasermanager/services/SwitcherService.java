@@ -7,6 +7,8 @@ import com.chasermanager.domain.models.Switcher;
 import com.chasermanager.exceptions.NotFoundException;
 import com.chasermanager.exceptions.AlreadyExistsException;
 import jakarta.mail.MessagingException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,11 +17,15 @@ public interface SwitcherService {
 
     Switcher create(SwitcherCreate switcherCreate) throws NotFoundException, AlreadyExistsException;
 
-    void setStatus(Long id, SwitcherStatus status);
+    Switcher findById(Long id);
 
-    void update(Long id, Periodicity periodicity);
+    void update(Long id, SwitcherStatus status, Periodicity periodicity);
 
     List<Switcher> findAllByPeriodicity(long periodicity);
 
     void run(Switcher switcher) throws IOException, MessagingException;
+
+    void delete(Long id);
+
+    Page<Switcher> findAllByCurrentUser(Pageable pageable);
 }

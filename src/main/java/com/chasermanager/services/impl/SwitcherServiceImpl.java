@@ -15,6 +15,8 @@ import com.chasermanager.services.SwitcherService;
 import com.chasermanager.services.UrlService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -43,16 +45,15 @@ public class SwitcherServiceImpl implements SwitcherService {
     }
 
     @Override
-    public void setStatus(Long id, SwitcherStatus status) {
-        Switcher switcher = switcherRepository.getReferenceById(id);
-        switcher.setStatus(status);
-        switcherRepository.save(switcher);
+    public Switcher findById(Long id) {
+        return switcherRepository.findById(id).orElseThrow(() -> new NotFoundException("Chaser by id №"+id+" not found"));
     }
 
     @Override
-    public void update(Long id, Periodicity periodicity) {
-        Switcher switcher = switcherRepository.getReferenceById(id);
-        switcher.setPeriodicity(Periodicity.calculate(periodicity));
+    public void update(Long id, SwitcherStatus status, Periodicity periodicity) {
+        Switcher switcher = findById(id);
+        if (status != null) switcher.setStatus(status);
+        if (periodicity != null) switcher.setPeriodicity(Periodicity.calculate(periodicity));
         switcherRepository.save(switcher);
     }
 
@@ -66,5 +67,16 @@ public class SwitcherServiceImpl implements SwitcherService {
         if (switcher.getUrl().getSource().getName().equals("Победа-63")) {
             preparationService.preparePobeda63(switcher);
         }
+    }
+
+    @Override
+    public void delete(Long id) {
+        switcherRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Switcher> findAllByCurrentUser(Pageable pageable) {
+        User user = userRepository.findByEmail("abylaykuat@gmail.com");
+        return switcherRepository.findAllByUser(user, pageable);
     }
 }
