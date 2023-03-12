@@ -17,13 +17,10 @@ import lombok.Setter;
 public class Switcher extends BaseEntity{
     @ManyToOne
     private User user;
-
     @ManyToOne
     private Url url;
-
     @Enumerated(EnumType.STRING)
     private SwitcherStatus status;
-
     private long periodicity;
-
+    private String name;
 }

@@ -12,6 +12,7 @@ create table switchers
             references urls (id),
     status      varchar   not null,
     periodicity bigint    not null,
+    name        varchar   not null,
     created_at  timestamp default current_timestamp(0),
     updated_at  timestamp default null
 )

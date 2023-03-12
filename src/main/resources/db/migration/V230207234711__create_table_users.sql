@@ -7,3 +7,6 @@ create table users
     created_at timestamp default current_timestamp(0),
     updated_at timestamp default null
 );
+
+insert into users(email, password)
+values ('marat_bh@mail.ru', 'qwe')

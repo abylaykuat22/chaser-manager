@@ -34,13 +34,14 @@ public class SwitcherServiceImpl implements SwitcherService {
 
     @Override
     public Switcher create(SwitcherCreate switcherCreate) throws NotFoundException, AlreadyExistsException {
-        User user = userRepository.findByEmail("abylaykuat@gmail.com");
+        User user = userRepository.findByEmail("marat_bh@mail.ru");
         Url url = urlService.create(switcherCreate.getLink(), switcherCreate.getSource());
         boolean isExist = switcherRepository.existsByUserAndUrl(user, url);
         if (isExist) throw new AlreadyExistsException("You already have a chaser on this link");
         Switcher switcher = new Switcher();
         switcher.setUser(user);
         switcher.setUrl(url);
+        switcher.setName(switcherCreate.getName());
         switcher.setPeriodicity(Periodicity.mapToNumbers(switcherCreate.getPeriodicity()));
         switcher.setStatus(SwitcherStatus.STOP);
         return switcherRepository.save(switcher);
@@ -83,7 +84,7 @@ public class SwitcherServiceImpl implements SwitcherService {
 
     @Override
     public Page<SwitcherView> findAllByCurrentUser(Pageable pageable) {
-        User user = userRepository.findByEmail("abylaykuat@gmail.com");
+        User user = userRepository.findByEmail("marat_bh@mail.ru");
         return switcherRepository.findAllByUser(user, pageable)
                 .map(SwitcherMapper.INSTANCE::toView);
     }

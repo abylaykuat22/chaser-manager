@@ -6,3 +6,6 @@ create table sources
     created_at timestamp default current_timestamp(0),
     updated_at timestamp default null
 );
+
+insert into sources (name)
+values ('Победа-63')

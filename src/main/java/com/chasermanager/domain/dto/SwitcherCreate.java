@@ -8,4 +8,5 @@ public class SwitcherCreate {
     private String source;
     private String link;
     private Periodicity periodicity;
+    private String name;
 }
